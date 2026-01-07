@@ -9,307 +9,103 @@
 ![MySQL](https://img.shields.io/badge/mysql-database-4479A1?style=for-the-badge&logo=mysql)
 ![Docker](https://img.shields.io/badge/docker-ready-2496ED?style=for-the-badge&logo=docker)
 
-**Starter kit backend em Node.js + TypeScript para projetos escaláveis e testáveis**
-
-[Características](#-características) •
-[Instalação](#-instalação) •
-[Uso](#️-uso) •
-[Arquitetura](#-arquitetura) •
-[Testes](#-testes)
+**Starter kit backend profissional em Node.js + TypeScript, pronto para começar seu projeto sem dor de cabeça.**
 
 </div>
 
 ---
 
-## 🎯 Sobre o Projeto
+## 🎯 Por que usar este projeto?
 
-Stack Base Backend é um **starter kit robusto** que elimina o tempo gasto configurando infraestrutura inicial, permitindo que você foque diretamente nas **regras de negócio** do seu projeto.
-
-Construído com base em princípios sólidos de **Clean Architecture** e **Domain-Driven Design (DDD)**, este repositório oferece uma fundação profissional para APIs REST modernas.
-
-### ✨ Características
-
-- ✅ **Clean Architecture** - Separação clara de responsabilidades
-- ✅ **Domain-Driven Design** - Foco nas regras de negócio
-- ✅ **Type-Safe** - TypeScript em todo o projeto
-- ✅ **ORM Moderno** - Prisma para manipulação de dados
-- ✅ **Testes Automatizados** - Vitest configurado e pronto
-- ✅ **Validação de Dados** - Zod para schemas robustos
-- ✅ **Code Quality** - ESLint + Prettier configurados
-- ✅ **Docker Ready** - Ambiente containerizado
-- ✅ **API REST** - Express 5.x otimizado
+- 🚀 **Pronto para produção**: Clean Architecture, DDD e testes já configurados  
+- ⚡ **Economize tempo**: não perca horas configurando infraestrutura  
+- 🛡 **Seguro e organizado**: TypeScript, ESLint, Prettier e validação com Zod  
+- 🧪 **Testes inclusos**: Vitest configurado e pronto para rodar  
+- 🐳 **Docker Ready**: banco de dados e ambiente isolados  
+- 🔑 **Fácil de estender**: cada entidade tem seus próprios casos de uso  
 
 ---
 
-## 🏗️ Arquitetura
+## 🛠️ Tecnologias
 
-O projeto segue princípios de **Clean Architecture**, garantindo baixo acoplamento e alta coesão:
-
-```
-src/
-├── 📁 app/                    # Camada de Aplicação
-│   └── use-cases/             # Casos de uso (regras de aplicação)
-│       └── entidade/
-│           └── caso-de-uso/
-│               ├── input.ts   # DTOs de entrada
-│               ├── error.ts   # Erros específicos
-│               └── index.ts   # Implementação
-│
-├── 📁 contracts/              # Contratos (Interfaces)
-│   ├── controllers/           # Interfaces de controllers
-│   ├── dtos/                  # Data Transfer Objects
-│   ├── enums/                 # Enumerações
-│   ├── mappers/               # Interfaces de mapeamento
-│   ├── repositories/          # Interfaces de repositórios
-│   └── services/              # Interfaces de serviços
-│
-├── 📁 domain/                 # Camada de Domínio
-│   └── entities/              # Entidades (regras de negócio puras)
-│       └── entidade/
-│           ├── enum.ts        # Enums da entidade
-│           └── index.ts       # Classe da entidade
-│
-├── 📁 infra/                  # Camada de Infraestrutura
-│   ├── controllers/           # Controladores HTTP
-│   ├── factories/             # Factories (DI)
-│   ├── middlewares/           # Middlewares Express
-│   ├── repositories/          # Implementações dos repositórios
-│   │   └── prisma/            # Repositórios com Prisma
-│   ├── routes/                # Rotas da API
-│   ├── schemas/               # Schemas Zod
-│   ├── services/              # Serviços externos
-│   ├── app.ts                 # Configuração Express
-│   ├── logger.ts              # Sistema de logs
-│   └── server.ts              # Inicialização do servidor
-│
-├── 📁 shared/                 # Código Compartilhado
-│   └── prisma/
-│       ├── client.ts          # Cliente Prisma
-│       └── error.ts           # Tratamento de erros
-│
-└── 📁 tests/                  # Testes Automatizados
-```
-
-### 🧠 Princípios Aplicados
-
-| Camada | Responsabilidade | Dependências |
-|--------|------------------|--------------|
-| **Domain** | Entidades e regras de negócio puras | Nenhuma |
-| **Use Cases** | Orquestração de regras de aplicação | Domain + Contracts |
-| **Contracts** | Definição de interfaces | Domain |
-| **Infra** | Implementações técnicas | Contracts + Frameworks |
-| **Shared** | Código reutilizável | Mínimas |
+- Node.js + TypeScript  
+- Express 5.x  
+- Prisma ORM (MySQL)  
+- Vitest para testes  
+- Zod para validação  
+- ESLint + Prettier  
+- Docker & Docker Compose (opcional)  
+- JWT pronto para autenticação  
 
 ---
 
-## 🛠️ Stack Tecnológica
+## ⚡ Começando
 
-<table>
-<tr>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=nodejs" width="48" height="48" alt="Node.js" />
-<br>Node.js
-</td>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=typescript" width="48" height="48" alt="TypeScript" />
-<br>TypeScript
-</td>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=express" width="48" height="48" alt="Express" />
-<br>Express
-</td>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=prisma" width="48" height="48" alt="Prisma" />
-<br>Prisma
-</td>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=mysql" width="48" height="48" alt="MySQL" />
-<br>MySQL
-</td>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=vitest" width="48" height="48" alt="Vitest" />
-<br>Vitest
-</td>
-<td align="center" width="96">
-<img src="https://skillicons.dev/icons?i=docker" width="48" height="48" alt="Docker" />
-<br>Docker
-</td>
-</tr>
-</table>
-
----
-
-## 📋 Pré-requisitos
-
-Antes de começar, certifique-se de ter instalado:
-
-- **Node.js** >= 18
-- **pnpm** (recomendado) ou npm/yarn
-- **MySQL** (local ou via Docker)
-
-### Instalando pnpm
-
-```bash
-npm install -g pnpm
-```
-
----
-
-## 🚀 Instalação
-
-### 1️⃣ Clone o repositório
-
-```bash
-git clone https://github.com/yuri-dzt/stack-base-backend.git
-cd stack-base-backend
-```
-
-### 2️⃣ Instale as dependências
-
+### 1️⃣ Instalar dependências
 ```bash
 pnpm install
 ```
 
-### 3️⃣ Configure as variáveis de ambiente
+2️⃣ Configurar ambiente
 
-Crie um arquivo `.env` na raiz do projeto:
+Crie um arquivo .env baseado no .env.example:
 
-```env
-# Database
+```bash
 DATABASE_URL="mysql://user:password@localhost:3306/database"
-
-# Server
 PORT=3333
-
-# Authentication
 JWT_SECRET=supersecret
 ```
 
-### 4️⃣ Configure o banco de dados
+Todas as variáveis serão carregadas automaticamente pelo Docker ou pelo Node.js.
 
-```bash
-# Gerar o Prisma Client
-pnpm exec prisma generate
+3️⃣ Rodar a aplicação
 
-# Rodar as migrations
-pnpm exec prisma migrate dev
-```
-
----
-
-## ▶️ Uso
-
-### Modo Desenvolvimento
+Modo desenvolvimento:
 
 ```bash
 pnpm dev
 ```
+Build e start (produção):
 
-A API estará disponível em `http://localhost:3333`
-
-### Build para Produção
-
-```bash
+```bash 
 pnpm build
 pnpm start
 ```
 
-### 🐳 Usando Docker
+A API estará disponível na porta definida em PORT.
 
-Suba o banco de dados MySQL com Docker Compose:
+🐳 Docker (opcional)
 
 ```bash
 docker-compose up -d
 ```
 
----
+Banco MySQL isolado em container
 
-## 🧪 Testes
+Sem necessidade de instalar MySQL localmente
 
-Execute os testes automatizados:
+🧪 Testes
 
 ```bash
-# Rodar todos os testes
-pnpm test
-
-# Modo watch
-pnpm test:watch
-
-# Coverage
-pnpm test:coverage
+pnpm test       # Rodar todos os testes
+pnpm test:watch # Modo watch
 ```
 
----
+💡 Benefícios
 
-## 📝 Padrões e Boas Práticas
+Economiza dias de configuração
 
-### ✅ Princípios Adotados
+Estrutura pronta para escalar e manter
 
-- **Use Cases** não conhecem frameworks
-- **Controllers** apenas orquestram
-- **Infra** depende de **Contracts**, nunca o contrário
-- **Domínio** é totalmente isolado
-- Cada entidade possui seus próprios casos de uso
-- Injeção de dependência via **Factories**
-- Validação de dados com **Zod**
+Permite focar no que realmente importa: suas regras de negócio
 
-### 📐 Convenções de Código
+👨‍💻 Autor
 
-- **ESLint** para análise estática
-- **Prettier** para formatação
-- **Conventional Commits** para mensagens de commit
-- **TypeScript strict mode** habilitado
+Yuri Donizete – Backend Developer • Clean Architecture Enthusiast
 
----
+GitHub: yuri-dzt
 
-## 🎯 Roadmap
+LinkedIn: Yuri Donizete
 
-- [ ] Autenticação JWT completa
-- [ ] Sistema de Refresh Token
-- [ ] Integração com Redis (Cache)
-- [ ] Upload de arquivos
+Email: yuridonizete303@gmail.com
 
----
-
-## 🤝 Contribuindo
-
-Contribuições são sempre bem-vindas! Sinta-se à vontade para:
-
-1. Fazer um Fork do projeto
-2. Criar uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abrir um Pull Request
-
----
-
-## 📄 Licença
-
-Este projeto está sob a licença ISC. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
-
----
-
-## 👨‍💻 Autor
-
-<div align="center">
-<img src="https://github.com/yuri-dzt.png" width="100px" style="border-radius: 50%;" alt="Yuri Donizete"/>
-
-**Yuri Donizete**
-
-*Software Developer • Backend Specialist • Clean Architecture Enthusiast*
-
-[![GitHub](https://img.shields.io/badge/GitHub-yuri--dzt-181717?style=for-the-badge&logo=github)](https://github.com/yuri-dzt)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Yuri%20Donizete-0077B5?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/yuri-donizete-58092b266/)
-[![Email](https://img.shields.io/badge/Email-yuridonizete303%40gmail.com-EA4335?style=for-the-badge&logo=gmail)](mailto:yuridonizete303@gmail.com)
-
-</div>
-
----
-
-<div align="center">
-
-**⭐ Se este projeto foi útil para você, considere dar uma estrela!**
-
-Made with ❤️ and ☕ by Yuri Donizete
-
-</div>
