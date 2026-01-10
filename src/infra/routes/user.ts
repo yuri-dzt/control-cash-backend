@@ -11,6 +11,8 @@ import { UpdateUserControllerFactory } from "../factories/user/update";
 import { UpdateUserInput } from "../../app/use-cases/user/update/input";
 import { CreateUserInput } from "../../app/use-cases/user/create/input";
 import { DeleteUserInput } from "../../app/use-cases/user/delete/input";
+import { RefreshAccountControllerFactory } from "../factories/user/refresh-account";
+import { verifyTokenMiddleware } from "../middlewares/jwt";
 
 const route = Router();
 
@@ -100,6 +102,21 @@ route.patch('/users/:user_id', async (req: Request<any, any, UpdateUserInput>, r
       return res.status(400).json({ errors: formattedErrors });
     }
 
+    return res.status(500).json({ message: (err as Error).message });
+  }
+})
+
+route.get('/users/refresh', verifyTokenMiddleware, async (req: Request<any, any, any>, res: Response) => {
+  try {
+    const { account_id } = req.user
+
+    const controller = RefreshAccountControllerFactory();
+    const response = await controller.handle({
+      id: account_id
+    })
+
+    return res.status(response.status_code).json(response.body)
+  } catch (err) {
     return res.status(500).json({ message: (err as Error).message });
   }
 })
