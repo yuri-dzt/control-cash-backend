@@ -25,7 +25,7 @@ export class UpdateUserUseCase {
 
       if (props.email) {
         const emailExist = await this.userRepo.findByEmail(props.email);
-        if (emailExist) {
+        if (emailExist && emailExist.id !== props.user_id) {
           return new UpdateUserUseCaseError("Already exists an user with this email!");
         }
 

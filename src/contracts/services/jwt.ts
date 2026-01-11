@@ -2,6 +2,7 @@ export type JwtPayloadProps = {
   account_id: string;
   account_type: string;
   exp?: number;
+  type?: "access" | "refresh";
 };
 
 export interface IJwtService {
