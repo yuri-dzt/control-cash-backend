@@ -35,15 +35,6 @@ export class LoginUseCase {
         return new LoginUseCaseError("Unauthorized!");
       }
 
-      // 3️⃣ Gera access token
-      const accessTokenExp = Math.floor(Date.now() / 1000) + 60 * 60; // 1h
-      const access_token = this.jwtService.sign({
-        account_id: userExist.id,
-        account_type: userExist.role,
-        type: "access",
-        exp: accessTokenExp
-      });
-
       // 4️⃣ Gera refresh token
       const refreshTokenExp = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30d
       const refresh_token = this.jwtService.sign({
@@ -66,6 +57,15 @@ export class LoginUseCase {
       if (result instanceof Error) {
         return new LoginUseCaseError(result.message);
       }
+
+      const accessTokenExp = Math.floor(Date.now() / 1000) + 60 * 60; // 1h
+      const access_token = this.jwtService.sign({
+        account_id: userExist.id,
+        account_type: userExist.role,
+        type: "access",
+        exp: accessTokenExp,
+        session_id: session.id
+      });
 
       return {
         access_token,

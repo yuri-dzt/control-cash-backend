@@ -1,6 +1,7 @@
 export type JwtPayloadProps = {
   account_id: string;
   account_type: string;
+  session_id?: string;
   exp?: number;
   type?: "access" | "refresh";
 };

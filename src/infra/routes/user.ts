@@ -16,7 +16,7 @@ import { verifyTokenMiddleware } from "../middlewares/jwt";
 
 const route = Router();
 
-route.post('/users', async (req: Request<any, any, CreateUserInput>, res: Response) => {
+route.post('/users', verifyTokenMiddleware, async (req: Request<any, any, CreateUserInput>, res: Response) => {
   try {
     const { email, password, name } = createUserSchema.parse(req.body)
 
@@ -42,7 +42,7 @@ route.post('/users', async (req: Request<any, any, CreateUserInput>, res: Respon
   }
 })
 
-route.delete('/users/:id', async (req: Request<any, any, DeleteUserInput>, res: Response) => {
+route.delete('/users/:id', verifyTokenMiddleware, async (req: Request<any, any, DeleteUserInput>, res: Response) => {
   try {
     const { id } = deleteUserSchema.parse(req.params)
 
@@ -66,18 +66,20 @@ route.delete('/users/:id', async (req: Request<any, any, DeleteUserInput>, res: 
   }
 })
 
-route.get('/users', async (req: Request, res: Response) => {
+route.get('/users', verifyTokenMiddleware, async (req: Request, res: Response) => {
   try {
     const controller = GetUsersControllerFactory();
     const response = await controller.handle()
 
     return res.status(response.status_code).json(response.body)
   } catch (err) {
+
+
     return res.status(500).json({ message: (err as Error).message });
   }
 })
 
-route.patch('/users/:user_id', async (req: Request<any, any, UpdateUserInput>, res: Response) => {
+route.patch('/users/:user_id', verifyTokenMiddleware, async (req: Request<any, any, UpdateUserInput>, res: Response) => {
   try {
     const { user_id } = req.params
     const { email, password, name, role } = updateUserSchema.parse(req.body)
