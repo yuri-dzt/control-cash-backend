@@ -1,300 +1,232 @@
-documentacao_estrutura: |
-  # 📁 Documentação da Estrutura – Stack Base Backend
+# 📁 Documentação de Arquitetura – Stack Base Backend
 
-  Este documento descreve detalhadamente a estrutura do projeto **Stack Base Backend**, explicando onde cada parte do código deve estar e como funciona. Ideal para desenvolvedores que compram o kit starter e querem entender rapidamente a arquitetura.
+Este documento descreve **como o projeto está organizado**, **por que essa organização existe** e **quais regras devem ser seguidas** ao evoluir o código.
 
-  ---
+Ele serve como **manual técnico** para desenvolvedores que utilizam ou estendem o Stack Base Backend.
 
-  ## Estrutura de Pastas
+---
 
+## 🎯 Objetivo da Arquitetura
+
+A arquitetura deste projeto foi definida para:
+
+* Separar regras de negócio de detalhes técnicos
+* Facilitar testes e manutenção
+* Evitar acoplamento entre camadas
+* Garantir consistência entre diferentes projetos
+* Servir como base escalável para sistemas reais
+
+O projeto segue princípios de **Clean Architecture** e **DDD aplicado de forma pragmática**.
+
+---
+
+## 🧱 Visão Geral das Camadas
+
+```
+HTTP (Express)
+  ↓
+Controllers (infra)
+  ↓
+Use Cases (app)
+  ↓
+Repositories (contracts → infra)
+  ↓
+Database (Prisma / MySQL)
+```
+
+### Regras importantes
+
+* O **domínio não conhece** Express, Prisma ou banco de dados
+* Controllers **não possuem lógica de negócio**
+* Casos de uso representam **ações do sistema**, não endpoints
+* Infraestrutura pode ser substituída sem alterar o domínio
+
+---
+
+## 📂 Estrutura de Pastas
+
+```
 stack-base-backend/
 │
 ├── src/
-│ ├── app/
-│ │ └── use-cases/
-│ │ └── <entidade>/
-│ │ ├── create/
-│ │ │ ├── error.ts # Erros específicos do caso de uso
-│ │ │ ├── index.ts # Lógica principal do caso de uso
-│ │ │ └── input.ts # Validações de entrada (Zod)
-│ │ └── ... # update, delete etc.
-│ │
-│ ├── contracts/
-│ │ ├── controllers/ # Interfaces dos controllers
-│ │ │ └── controller.ts
-│ │ ├── dtos/ # DTOs de entrada/saída
-│ │ │ └── entidade.ts
-│ │ ├── enums/ # Enums globais
-│ │ │ └── enum.ts
-│ │ ├── mappers/ # Funções de mapeamento
-│ │ │ └── entidade.ts
-│ │ ├── repositories/ # Interfaces de repositório
-│ │ │ └── entidade.ts
-│ │ └── services/ # Interfaces de serviços
-│ │ └── serviço.ts
-│ │
-│ ├── domain/
-│ │ └── entities/
-│ │ └── <entidade>/
-│ │ ├── enum.ts
-│ │ └── index.ts
-│ │
-│ ├── infra/
-│ │ ├── controllers/
-│ │ │ └── <entidade>/
-│ │ │ ├── create.ts
-│ │ │ ├── delete.ts
-│ │ │ └── ...
-│ │ ├── factories/
-│ │ │ └── <entidade>/
-│ │ │ ├── create.ts
-│ │ │ └── delete.ts
-│ │ ├── middlewares/
-│ │ │ └── middleware.ts
-│ │ ├── repositories/
-│ │ │ └── prisma/
-│ │ │ └── entidade.ts
-│ │ ├── routes/
-│ │ │ └── entidade.ts
-│ │ ├── schemas/
-│ │ │ └── <entidade>/
-│ │ │ ├── create.ts
-│ │ │ └── delete.ts
-│ │ ├── services/
-│ │ │ └── serviço.ts
-│ │ ├── app.ts
-│ │ ├── logger.ts
-│ │ └── server.ts
-│ │
-│ └── shared/
-│ ├── prisma/
-│ │ ├── client.ts
-│ │ └── error.ts
-│ ├── types/
-│ │ └── express/
-│ │ └── index.d.ts
-│ └── account.ts
+│   ├── app/
+│   │   └── use-cases/
+│   │       └── <entidade>/
+│   │           ├── create/
+│   │           │   ├── index.ts   # Lógica do caso de uso
+│   │           │   ├── input.ts   # Tipagem e validação de entrada
+│   │           │   └── error.ts   # Erros específicos
+│   │           └── ...            # update, delete, etc
+│   │
+│   ├── domain/
+│   │   └── entities/
+│   │       └── <entidade>/
+│   │           ├── index.ts       # Entidade e regras
+│   │           └── enum.ts        # Enums do domínio
+│   │
+│   ├── contracts/
+│   │   ├── controllers/           # Interfaces de controllers
+│   │   ├── dtos/                  # DTOs de entrada/saída
+│   │   ├── repositories/          # Interfaces de repositório
+│   │   ├── services/              # Interfaces de serviços
+│   │   ├── mappers/               # Mapeadores domínio ↔ DTO
+│   │   └── enums/                 # Enums globais
+│   │
+│   ├── infra/
+│   │   ├── controllers/           # Controllers Express
+│   │   ├── routes/                # Rotas HTTP
+│   │   ├── factories/             # Criação de dependências
+│   │   ├── middlewares/            # Middlewares Express
+│   │   ├── repositories/
+│   │   │   └── prisma/             # Implementações Prisma
+│   │   ├── schemas/                # Validações Zod por endpoint
+│   │   ├── services/               # Serviços concretos
+│   │   ├── app.ts                  # Configuração do Express
+│   │   ├── server.ts               # Inicialização do servidor
+│   │   └── logger.ts               # Logger centralizado
+│   │
+│   └── shared/
+│       ├── prisma/                # Prisma Client
+│       ├── types/                 # Tipagens globais
+│       └── utils/                 # Utilitários compartilhados
 │
 ├── prisma/
-│ ├── migrations/
-│ └── schema.prisma
+│   ├── migrations/
+│   └── schema.prisma
 │
-├── tests/ # Testes unitários e integração
-├── docker-compose.yml
+├── tests/                          # Testes unitários e integração
 ├── Dockerfile
+├── docker-compose.yml
 ├── README.md
-├── .env
-└── .env.example
-
-
----
-
-## Explicação das Pastas
-
-### `src/app/use-cases`
-- Contém **a lógica de negócio** de cada entidade.
-- Cada operação (create, update, delete) tem:
-  - input.ts → validação de entrada com Zod
-  - error.ts → erros específicos do caso de uso
-  - index.ts → execução do caso de uso
-- Mantém a lógica independente de frameworks ou banco de dados.
-
-### `src/contracts`
-- Define **interfaces e contratos** do sistema.
-- Inclui:
-  - controllers/ → assinaturas de controllers
-  - dtos/ → DTOs de entrada/saída
-  - enums/ → enums globais
-  - mappers/ → funções de mapeamento
-  - repositories/ → interfaces de repositórios
-  - services/ → interfaces de serviços
-
-### `src/domain/entities`
-- Contém **entidades do domínio**, independentes de tecnologia.
-- Exemplo: User, Product, com enums e propriedades.
-
-### `src/infra`
-- Camada de **implementação tecnológica**:
-  - controllers/ → controllers Express
-  - factories/ → fábricas para criar instâncias
-  - middlewares/ → middlewares Express
-  - repositories/prisma/ → repositórios concretos usando Prisma
-  - routes/ → rotas Express
-  - schemas/ → validações Zod
-  - services/ → serviços concretos
-  - app.ts → inicialização do app
-  - server.ts → start do servidor
-  - logger.ts → logging
-
-### `src/shared`
-- Código **compartilhado entre módulos**:
-  - Prisma client e erros
-  - Tipagens Express customizadas
-  - Utils gerais (`account.ts`)
-
-### `prisma/`
-- schema.prisma → modelo do banco
-- migrations/ → histórico de migrations
-
-### `__tests__/`
-- Testes unitários e de integração, organizados seguindo a mesma estrutura do `src/`.
-
-### Arquivos principais
-- .env e .env.example → variáveis de ambiente
-- Dockerfile e docker-compose.yml → setup Docker
-- README.md → documentação principal
+├── docs.md
+├── .env.example
+└── .env
+```
 
 ---
 
-## Fluxo da aplicação
+## 📌 Responsabilidade das Camadas
 
-1. **Rotas** → `infra/routes/*.ts`  
-2. **Controllers** → recebem requisições HTTP e chamam **use-cases**  
-3. **Use-cases** → executam a lógica de negócio (`app/use-cases`)  
-4. **Repositórios** → acessam o banco via Prisma (`infra/repositories/prisma`)  
-5. **Retorno** → Controllers enviam resposta ao cliente
+### `app/use-cases`
+
+* Contém **toda a lógica de negócio**
+* Cada pasta representa uma ação (ex: create, update)
+* Não importa Express, Prisma ou HTTP
+
+### `domain/entities`
+
+* Define entidades e regras do domínio
+* Independente de frameworks
+* Pode conter validações de regra de negócio
+
+### `contracts`
+
+* Define **contratos do sistema**
+* Interfaces de repositórios, serviços e controllers
+* DTOs e mappers
+* **Nunca contém lógica de negócio**
+
+### `infra`
+
+* Implementação técnica
+* Controllers Express
+* Repositórios Prisma
+* Middlewares, rotas e serviços
+
+### `shared`
+
+* Código reutilizável entre módulos
+* Prisma Client
+* Tipagens globais
+* Utilitários comuns
 
 ---
 
-## Boas práticas
+## 🔐 Autenticação, Sessões e Tokens
 
-- Separação clara entre **domínio** e **infraestrutura**
-- Cada entidade possui **casos de uso isolados**
-- shared/ - centraliza tipos, validações e utilitários
-- Testes seguem a mesma estrutura para fácil manutenção
-- Validações Zod por operação, dentro de `schemas/`
+### Visão geral
 
------------------------------------------------------
+O sistema utiliza um fluxo de autenticação baseado em **JWT + Refresh Token**, com controle de **sessões persistidas**.
 
-🔹 Explicação das Pastas (detalhado)
-src/app/use-cases
+### Conceitos
 
-Contém casos de uso específicos por entidade
+* **Access Token**
 
-Cada operação (create, update, delete) possui:
+  * Curta duração
+  * Enviado no header Authorization
+  * Usado para proteger rotas
 
-index.ts → lógica do caso de uso
-input.ts → interface do que será recebido
-error.ts → erros específicos
+* **Refresh Token**
 
-src/domain/entities
+  * Longa duração
+  * Persistido no banco de dados
+  * Associado a uma sessão
 
-Contém entidades do domínio
+* **Session**
 
-Independentes de frameworks
+  * Criada a cada login
+  * Vincula usuário, refresh token e metadados
+  * Permite múltiplos logins simultâneos
 
-Cada entidade tem:
+### Fluxo de login
 
-enum.ts → enums da entidade
-index.ts → definição da entidade e propriedades
+```
+Login →
+  Cria sessão →
+    Gera refresh token →
+      Gera access token
+```
 
-src/contracts
+### Fluxo de refresh
 
-Contém interfaces e contratos
+```
+Access token expirado →
+  Cliente envia refresh token →
+    Valida sessão →
+      Gera novo access token
+```
 
-Mantém padronização entre controllers, DTOs, repositórios e serviços
+### Logout
 
-src/infra
+* Invalida a sessão
+* Remove refresh token
+* Access token expira naturalmente
 
-Implementação tecnológica:
+---
 
-Controllers Express finos, chamando casos de uso
+## 🚫 Regras Arquiteturais (Obrigatórias)
 
-Factories → criam instâncias
+* ❌ Controllers não devem conter regra de negócio
+* ❌ Use-cases não conhecem Express
+* ❌ Schemas Zod não substituem validações de domínio
+* ❌ Entidades não dependem de infra
 
-Middlewares Express
+---
 
-Repositórios Prisma
+## 🧪 Testes
 
-Schemas Zod → validação de dados de entrada nos endpoints
+* Estrutura espelhada ao `src/`
+* Testes unitários para use-cases
+* Testes de integração para controllers e repositórios
 
-App.ts e server.ts → inicialização do servidor
+---
 
-Logger.ts → logging centralizado
+## ✅ Checklist de Qualidade
 
-src/shared
+* Casos de uso isolados
+* Domínio independente
+* Infra desacoplada
+* Tipagem forte
+* Validações explícitas
+* Testes cobrindo regras críticas
 
-Tipos e utilitários compartilhados
+---
 
-Prisma client
+## 🎁 Benefícios da Estrutura
 
-Custom typings Express
+* Facilita manutenção e evolução
+* Reduz risco de regressões
+* Acelera onboarding
+* Ideal para projetos profissionais e produtos pagos
 
-Arquivo account.ts com tipos gerais
-
-Prisma
-
-schema.prisma → modelo do banco
-
-migrations/ → histórico de migrações
-
-Testes
-
-Seguem a mesma estrutura do src/
-
-Unitários e integração
-
-Cobrem use-cases, controllers e repositórios
-
-🔹 Checklist de Boas Práticas
-Use-cases
-
-Cada operação isolada em sua pasta
-
-input.ts apenas interface
-
-error.ts apenas erros específicos
-
-index.ts → lógica de negócio pura
-
-Domain
-
-Entidades independentes de infra
-
-Enum separado
-
-Contracts
-
-Sem lógica de negócio
-
-Apenas DTOs, interfaces e tipos
-
-Infra
-
-Controllers finos
-
-Schemas Zod só para validação
-
-Repositórios acessam Prisma
-
-Factories isolam criação de instâncias
-
-Logger centralizado
-
-Middlewares reutilizáveis
-
-Shared
-
-Centraliza tipos, utils, Prisma client
-
-Evita duplicação de código
-
-Testes
-
-Seguir estrutura src/
-
-Cobrir todos os casos de uso
-
-Testar controllers isoladamente
-
-🔹 Benefícios desta Estrutura
-
-Separação clara entre domínio e infraestrutura
-
-Facilita escalabilidade
-
-Código testável e tipado
-
-Facilita onboarding de novos desenvolvedores
-
-Ideal para entregar como material premium do kit starter
+> Este documento define o padrão. Modificações são permitidas, desde que a consistência arquitetural seja mantida.
