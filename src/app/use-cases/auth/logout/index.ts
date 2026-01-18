@@ -1,5 +1,5 @@
-import { ISessionRepository } from "../../../../contracts/repositories/session";
 import { LogoutUseCaseInput } from "./input";
+import { ISessionRepository } from "../../../../contracts/repositories/session";
 
 export class LogoutUseCase {
   constructor(

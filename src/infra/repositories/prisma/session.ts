@@ -65,4 +65,19 @@ export class PrismaSessionRepository implements ISessionRepository {
       return undefined
     }
   }
+
+  async findByUserId(user_id: string): Promise<Session[] | undefined> {
+    try {
+      const result = await prisma.session.findMany({
+        where: {
+          user_id
+        }
+      });
+
+      return result ? result.map(SessionMapper.toDomain) : undefined
+    } catch (err) {
+      console.log((err as PrismaError).message);
+      return undefined
+    }
+  }
 }

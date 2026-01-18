@@ -1,10 +1,10 @@
 import { LoginUseCaseInput } from "./input";
 import { LoginUseCaseError } from "./error";
-import { IJwtService, JwtPayloadProps } from "../../../../contracts/services/jwt";
+import { Session } from "../../../../domain/entities/session";
+import { IJwtService } from "../../../../contracts/services/jwt";
 import { IHashService } from "../../../../contracts/services/hash";
 import { IUserRepository } from "../../../../contracts/repositories/user";
 import { ISessionRepository } from "../../../../contracts/repositories/session";
-import { Session } from "../../../../domain/entities/session";
 
 export interface LoginUseCaseResponse {
   access_token: string;
@@ -58,7 +58,7 @@ export class LoginUseCase {
         return new LoginUseCaseError(result.message);
       }
 
-      const accessTokenExp = Math.floor(Date.now() / 1000) + 60 * 60; // 1h
+      const accessTokenExp = Math.floor(Date.now() / 1000) + 60 * 60 * 7 * 24; // 7d
       const access_token = this.jwtService.sign({
         account_id: userExist.id,
         account_type: userExist.role,

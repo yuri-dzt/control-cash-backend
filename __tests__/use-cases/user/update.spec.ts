@@ -30,10 +30,13 @@ describe("UpdateUserUseCase", () => {
   })
 
   it("should not be able to update email if already exists an user with this email", async () => {
-    const user1 = makeUser()
+    const user1 = makeUser({
+      id: '1'
+    })
     await userRepo.create(user1)
 
     const user2 = makeUser({
+      id: '2',
       email: "user2@gmail.com",
     })
     await userRepo.create(user2)

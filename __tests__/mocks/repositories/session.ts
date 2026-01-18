@@ -26,7 +26,7 @@ export class InMemorySessionRepository implements ISessionRepository {
     return this.sessions.find(c => c.refresh_token === token);
   }
 
-  async findByUserId(user_id: string): Promise<Session | undefined> {
-    return this.sessions.find(c => c.user_id === user_id);
+  async findByUserId(user_id: string): Promise<Session[] | undefined> {
+    return this.sessions.filter(c => c.user_id === user_id);
   }
 }

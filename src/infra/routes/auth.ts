@@ -5,7 +5,6 @@ import { loginSchema } from "../schemas/auth/login";
 import { LoginControllerFactory } from "../factories/auth/login";
 import { LogoutControllerFactory } from "../factories/auth/logout";
 import { LoginUseCaseInput } from "../../app/use-cases/auth/login/input";
-import { RefreshTokenControllerFactory } from "../factories/auth/refresh-token";
 
 const route = Router();
 
@@ -30,25 +29,6 @@ route.post('/login', async (req: Request<any, any, LoginUseCaseInput>, res: Resp
       return res.status(400).json({ errors: formattedErrors });
     }
 
-    return res.status(500).json({ message: (err as Error).message });
-  }
-})
-
-route.post('/refresh', async (req: Request, res: Response) => {
-  try {
-    const refresh_token = req.cookies?.refresh_token;
-
-    if (!refresh_token) {
-      return res.status(400).json({ message: "Refresh token is required" });
-    }
-
-    const controller = RefreshTokenControllerFactory();
-    const response = await controller.handle({
-      refresh_token
-    })
-
-    return res.status(response.status_code).json(response.body)
-  } catch (err) {
     return res.status(500).json({ message: (err as Error).message });
   }
 })
