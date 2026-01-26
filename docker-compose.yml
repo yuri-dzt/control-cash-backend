@@ -4,8 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: stack_base_backend
-    container_name: stack_base_backend
+    image: framefree_backend
+    container_name: framefree_backend
     ports:
       - "5000:5000"
     environment:

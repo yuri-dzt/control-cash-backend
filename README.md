@@ -1,201 +1,359 @@
-# 🚀 Stack Base Backend
+# Mini CRM SaaS
 
-<div align="center">
+## 📌 Visão Geral
 
-![Node.js](https://img.shields.io/badge/node-%3E%3D18-green?style=for-the-badge\&logo=node.js)
-![TypeScript](https://img.shields.io/badge/typescript-5.9-blue?style=for-the-badge\&logo=typescript)
-![Express](https://img.shields.io/badge/express-5.x-lightgrey?style=for-the-badge\&logo=express)
-![Prisma](https://img.shields.io/badge/prisma-5.21.1-2D3748?style=for-the-badge\&logo=prisma)
-![MySQL](https://img.shields.io/badge/mysql-database-4479A1?style=for-the-badge\&logo=mysql)
-![Docker](https://img.shields.io/badge/docker-ready-2496ED?style=for-the-badge\&logo=docker)
+Este projeto é um **Mini CRM SaaS multi-tenant**, desenvolvido para atender micro e pequenas empresas que precisam organizar **leads, clientes, atividades e pipeline de vendas** de forma simples, flexível e escalável.
 
-**Starter kit backend profissional, opinativo e escalável, baseado em Clean Architecture e DDD.**
+O foco do produto é:
 
-</div>
+* simplicidade de uso
+* alta personalização por empresa
+* arquitetura preparada para crescimento
 
----
-
-## 📌 Visão geral
-
-O **Stack Base Backend** é um *starter kit* para APIs em Node.js criado para servir como **fundação sólida** de projetos reais — SaaS, ERPs, backends para aplicações frontend modernas ou sistemas internos.
-
-Ele foi pensado para desenvolvedores que:
-
-* não querem começar do zero a cada projeto
-* valorizam arquitetura, organização e testabilidade
-* precisam de um código fácil de manter e evoluir
-
-Este projeto **não é um CRUD genérico**. Ele entrega um padrão arquitetural claro e reutilizável.
+O sistema foi pensado desde o início como um **produto vendável**, com separação clara entre **domínio do cliente (CRM)** e **domínio da plataforma (administração do SaaS)**.
 
 ---
 
-## 🎯 Objetivos do projeto
+## 🎯 Público-alvo
 
-* Padronizar a criação de novos backends
-* Centralizar boas práticas de arquitetura
-* Separar regras de negócio de detalhes técnicos
-* Facilitar testes, manutenção e escalabilidade
-* Servir como base profissional e material de referência
+* Pequenas empresas
+* Clínicas e consultórios
+* Profissionais autônomos
+* Times de vendas pequenos
+* Agências e prestadores de serviço
 
 ---
 
-## 🧱 Arquitetura
+## 🏗️ Arquitetura
 
-O projeto segue os princípios de:
+### Multi-tenant
 
-* **Clean Architecture**
-* **DDD (Domain-Driven Design)** — aplicado de forma pragmática
-
-### Princípios adotados
-
-* O domínio **não depende** de frameworks
-* Controllers são finos e sem regra de negócio
-* Casos de uso representam ações do sistema
-* Infraestrutura é facilmente substituível
-* Dependências sempre apontam para o domínio
-
-Fluxo simplificado:
+O sistema utiliza o modelo **Shared Database + Tenant ID**, onde todas as entidades de negócio possuem o campo:
 
 ```
-HTTP → Controller → Use Case → Repository → Database
+organization_id
 ```
 
----
+Isso garante:
 
-## 🛠️ Tecnologias
-
-* **Node.js** 
-* **TypeScript**
-* **Express**
-* **Prisma ORM**
-* **MySQL**
-* **JWT** para autenticação
-* **Zod** para validação de dados
-* **Vitest** para testes
-* **ESLint + Prettier**
-* **Docker & Docker Compose**
+* isolamento de dados entre empresas
+* fácil aplicação de Row Level Security (RLS)
+* escalabilidade
 
 ---
 
-## 🔐 Autenticação
+### Separação de domínios
 
-O Stack Base Backend possui um fluxo de autenticação completo baseado em:
+#### 🔹 Domínio do Produto (CRM)
 
-- JWT (access token)
-- Refresh token
-- Controle de sessões
-- Rotação de tokens
-- Logout seguro
+Responsável pelas funcionalidades usadas pelos clientes:
 
-A implementação segue boas práticas de segurança e está documentada em detalhes no arquivo `docs.md`.
+* organizações
+* usuários
+* contatos
+* pipeline
+* atividades
 
----
+#### 🔹 Domínio da Plataforma (SaaS)
 
-## 📁 Organização do código
+Responsável pela administração do sistema:
 
-A estrutura foi desenhada para deixar clara a responsabilidade de cada camada:
+* controle de organizações
+* planos
+* métricas globais
+* suporte
 
-* `domain/` → entidades e regras centrais
-* `app/use-cases/` → regras de negócio por operação
-* `contracts/` → contratos, DTOs e interfaces
-* `infra/` → Express, Prisma, rotas e serviços concretos
-* `shared/` → código reutilizável e cross-cutting
-
-A documentação completa da estrutura está disponível em **docs.md**.
+Esse domínio é operado por usuários especiais chamados **SystemOperators**.
 
 ---
 
-## ⚡ Começando
+## 🧩 Entidades do Sistema
 
-### 1. Instalação
+### 🧾 Plan
 
-```bash
-pnpm install
-```
+Representa os planos comerciais do SaaS.
 
-### 2. Variáveis de ambiente
+**Campos principais:**
 
-Crie um `.env` baseado no `.env.example`:
-
-```env
-DATABASE_URL="mysql://user:password@localhost:3306/database"
-PORT=3333
-JWT_SECRET=supersecret
-```
-
-### 3. Executar o projeto
-
-Modo desenvolvimento:
-
-```bash
-pnpm dev
-```
-
-Build e execução:
-
-```bash
-pnpm build
-pnpm start
-```
+* id
+* name
+* price
+* is_active
+* created_at
+* updated_at
 
 ---
 
-## 🐳 Docker (opcional)
+### 🏢 Organization
 
-```bash
-docker-compose up -d
-```
+Representa uma empresa cliente da plataforma.
 
-* MySQL isolado em container
-* Sem necessidade de instalação local
+Cada organização possui seus próprios dados, usuários e configurações.
 
----
+**Campos principais:**
 
-## 🧪 Testes
-
-```bash
-pnpm test       # Executa todos os testes
-pnpm test:watch # Modo watch
-```
-
-Os testes seguem a mesma organização do `src/`, cobrindo:
-
-* casos de uso
-* controllers
-* repositórios
+* id
+* plan_id
+* name
+* email
+* is_active
+* email_is_verified
+* created_at
+* updated_at
 
 ---
 
-## ✅ Boas práticas aplicadas
+### 👤 User
 
-* Controllers sem lógica de negócio
-* Casos de uso isolados por ação
-* Validações explícitas com Zod
-* Erros específicos por contexto
-* Tipagem forte ponta a ponta
-* Infra desacoplada do domínio
+Usuário pertencente a uma organização.
 
----
+**Campos principais:**
 
-## 📦 Quando usar este stack
-
-* APIs REST profissionais
-* SaaS multi-tenant
-* ERPs e sistemas internos
-* Backends para Next.js / React
-* Projetos que precisam crescer sem retrabalho
+* id
+* organization_id
+* name
+* email
+* role (ADMIN | USER)
+* created_at
+* updated_at
 
 ---
 
-## 👨‍💻 Autor
+### 🏷️ Tag
 
-**Yuri Donizete**
-Backend Developer • Clean Architecture Enthusiast
+Tags criadas por uma organização para classificar contatos.
 
-* GitHub: `yuri-dzt`
-* LinkedIn: `Yuri Donizete`
-* Email: `yuridonizete303@gmail.com`
+**Campos principais:**
+
+* id
+* organization_id
+* name
+* color
+* created_at
+* updated_at
 
 ---
 
-> Este projeto é opinativo. Siga o padrão, adapte quando necessário e mantenha a consistência arquitetural.
+### 🔗 Taggable
+
+Entidade de ligação entre tags e contatos.
+
+**Campos principais:**
+
+* id
+* organization_id
+* tag_id
+* contact_id
+* created_at
+* updated_at
+
+---
+
+### 🔄 Pipeline
+
+Representa um funil de vendas.
+
+Cada organização pode criar múltiplos pipelines, separados por tipo de contato.
+
+**Campos principais:**
+
+* id
+* organization_id
+* name
+* contact_type (LEAD | CLIENT)
+* is_default
+* is_active
+* created_at
+* updated_at
+
+---
+
+### 📍 PipelineStage
+
+Estágios de um pipeline.
+
+**Campos principais:**
+
+* id
+* organization_id
+* pipeline_id
+* name
+* position
+* color
+* is_initial
+* is_final
+* is_active
+* created_at
+* updated_at
+
+---
+
+### 👥 Contact
+
+Entidade central do sistema.
+
+Leads e clientes são representados por uma única entidade, diferenciados pelo campo `type`.
+
+**Campos principais:**
+
+* id
+* organization_id
+* type (LEAD | CLIENT)
+* contact_status_id
+* pipeline_id?
+* pipeline_stage_id?
+* origin_id?
+* name
+* email
+* phone
+* assigned_to_user_id?
+* created_at
+* updated_at
+
+**Regras de negócio:**
+
+* contatos do tipo LEAD participam de pipelines
+* contatos do tipo CLIENT não participam de pipelines
+* conversão de lead para cliente é feita alterando o campo `type`
+
+---
+
+### 🟢 ContactStatus
+
+Status customizáveis definidos por organização.
+
+**Campos principais:**
+
+* id
+* organization_id
+* applies_to (LEAD | CLIENT)
+* name
+* color
+* created_at
+* updated_at
+
+---
+
+### 📞 Activity
+
+Representa tarefas e interações relacionadas a um contato.
+
+**Campos principais:**
+
+* id
+* organization_id
+* contact_id
+* activity_type_id
+* activity_status_id
+* due_date
+* completed_at?
+* assigned_to_user_id
+* created_at
+* updated_at
+
+---
+
+### 🧩 ActivityType
+
+Tipos de atividades configuráveis por organização.
+
+Exemplos:
+
+* ligação
+* reunião
+* WhatsApp
+
+**Campos principais:**
+
+* id
+* organization_id
+* name
+* created_at
+* updated_at
+
+---
+
+### 🚦 ActivityStatus
+
+Status possíveis para uma atividade.
+
+Exemplos:
+
+* pending
+* done
+* canceled
+
+**Campos principais:**
+
+* id
+* organization_id
+* name
+* created_at
+* updated_at
+
+---
+
+### 🕓 PipelineStageHistory
+
+Histórico de movimentação dos contatos no pipeline.
+
+Permite auditoria e análise de funil.
+
+**Campos principais:**
+
+* id
+* organization_id
+* contact_id
+* contact_type
+* from_stage_id
+* to_stage_id
+* changed_by_user_id
+* changed_at
+* created_at
+* updated_at
+
+---
+
+## 🛠️ Domínio da Plataforma
+
+### 🧑‍💻 SystemOperator
+
+Usuários internos responsáveis por operar e administrar o SaaS.
+
+**Características:**
+
+* não pertencem a nenhuma organization
+* possuem acesso global
+* operam dashboards administrativos
+
+**Exemplos de responsabilidades:**
+
+* ativar/desativar organizações
+* alterar planos
+* visualizar métricas globais
+* suporte aos clientes
+
+---
+
+## 🚀 Objetivos do Projeto
+
+* Servir como **projeto de portfólio avançado**
+* Ser uma base realista para um **produto SaaS vendável**
+* Demonstrar boas práticas de:
+
+  * modelagem de domínio
+  * multi-tenancy
+  * escalabilidade
+  * separação de responsabilidades
+
+---
+
+## 📌 Status
+
+O projeto está em desenvolvimento ativo e foi planejado para evoluir incrementalmente, começando por um MVP funcional e expandindo conforme validação do produto.
+
+---
+
+## 📄 Licença
+
+Projeto de uso educacional e profissional. A licença final poderá ser definida conforme o modelo de distribuição escolhido.
