@@ -6,32 +6,3 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
-enum UserRole {
-  ADMIN
-  USER
-}
-
-model User {
-  id         String    @id @unique
-  name       String
-  email      String    @unique
-  password   String
-  role       UserRole
-  created_at BigInt
-  updated_at BigInt?
-  sessions   Session[]
-
-  @@map("users")
-}
-
-model Session {
-  id            String @id
-  user_id       String
-  user          User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  refresh_token String @db.Text
-  expires_at    BigInt
-  created_at    BigInt
-
-  @@map("sessions")
-}

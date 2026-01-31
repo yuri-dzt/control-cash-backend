@@ -3,6 +3,7 @@ export type AccountProps = {
   name: string;
   email: string;
   password: string;
+  is_active: boolean;
   created_at: number;
   updated_at?: number;
 };
