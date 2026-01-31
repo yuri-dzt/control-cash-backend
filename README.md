@@ -4,14 +4,10 @@
 O **CONTROL CA$H** é um **mini ERP financeiro SaaS multi-tenant**, desenvolvido para ajudar empresas a controlarem **clientes, vendas, receitas e despesas** de forma simples, organizada e escalável.
 
 O foco do produto é:
-
-controle financeiro centralizado
-
-simplicidade de uso
-
-flexibilidade para diferentes tipos de negócio
-
-arquitetura preparada para crescimento
+* controle financeiro centralizado
+* simplicidade de uso
+* flexibilidade para diferentes tipos de negócio
+* arquitetura preparada para crescimento
 
 O sistema foi projetado desde o início como um **produto SaaS vendável**, com separação clara entre o **domínio financeiro (ERP)** e o **domínio da plataforma (administração do SaaS)**.
 
@@ -111,7 +107,6 @@ Representa os planos comerciais do SaaS.
 ### 🏢 Organization
 
 Representa uma empresa cliente da plataforma.
-
 Cada organização possui seus próprios dados e usuários.
 
 **Campos principais:**
@@ -272,7 +267,6 @@ Representa despesas da organização.
 ### 🔁 RecurringExpense
 
 Representa despesas recorrentes.
-
 Essas despesas geram automaticamente registros em Expense.
 
 **Campos principais:**
@@ -303,17 +297,6 @@ Essas despesas geram automaticamente registros em Expense.
 
 ---
 
-### 📌 Status do Projeto
-
-O CONTROL CA$H está em desenvolvimento ativo, começando por um MVP funcional e evoluindo de forma incremental, com foco em:
-
-* controle financeiro básico
-* multi-tenancy
-* permissões e papéis
-* estrutura SaaS
-
----
-
 ### 🚀 Objetivos do Projeto
 
 * Servir como projeto de portfólio avançado
@@ -323,3 +306,14 @@ O CONTROL CA$H está em desenvolvimento ativo, começando por um MVP funcional e
   * controle de permissões
   * organização de regras de negócio
   * escalabilidade
+
+  ---
+
+### 📌 Status do Projeto
+
+O CONTROL CA$H está em desenvolvimento ativo, começando por um MVP funcional e evoluindo de forma incremental, com foco em:
+
+* controle financeiro básico
+* multi-tenancy
+* permissões e papéis
+* estrutura SaaS
