@@ -1,26 +1,30 @@
-# Mini CRM SaaS
-
+# CONTROL CA$H — Mini ERP Financeiro SaaS
 ## 📌 Visão Geral
 
-Este projeto é um **Mini CRM SaaS multi-tenant**, desenvolvido para atender micro e pequenas empresas que precisam organizar **leads, clientes, atividades e pipeline de vendas** de forma simples, flexível e escalável.
+O **CONTROL CA$H** é um **mini ERP financeiro SaaS multi-tenant**, desenvolvido para ajudar empresas a controlarem **clientes, vendas, receitas e despesas** de forma simples, organizada e escalável.
 
 O foco do produto é:
 
-* simplicidade de uso
-* alta personalização por empresa
-* arquitetura preparada para crescimento
+controle financeiro centralizado
 
-O sistema foi pensado desde o início como um **produto vendável**, com separação clara entre **domínio do cliente (CRM)** e **domínio da plataforma (administração do SaaS)**.
+simplicidade de uso
+
+flexibilidade para diferentes tipos de negócio
+
+arquitetura preparada para crescimento
+
+O sistema foi projetado desde o início como um **produto SaaS vendável**, com separação clara entre o **domínio financeiro (ERP)** e o **domínio da plataforma (administração do SaaS)**.
 
 ---
 
 ## 🎯 Público-alvo
 
-* Pequenas empresas
+* Pequenas e médias empresas
+* Prestadores de serviço
 * Clínicas e consultórios
 * Profissionais autônomos
-* Times de vendas pequenos
-* Agências e prestadores de serviço
+* Microempreendedores (MEI)
+* Times administrativos e financeiros
 
 ---
 
@@ -44,30 +48,48 @@ Isso garante:
 
 ### Separação de domínios
 
-#### 🔹 Domínio do Produto (CRM)
+#### 🔹 Domínio do Produto (ERP Financeiro)
 
-Responsável pelas funcionalidades usadas pelos clientes:
+Responsável pelas funcionalidades utilizadas pelas empresas:
 
-* organizações
-* usuários
-* contatos
-* pipeline
-* atividades
+* clientes
+* vendas
+* receitas
+* despesas
+* recorrências
+* usuários e permissões
 
 #### 🔹 Domínio da Plataforma (SaaS)
 
-Responsável pela administração do sistema:
+Responsável pela gestão do SaaS:
 
-* controle de organizações
+* organizações
 * planos
+* operadores do sistema
 * métricas globais
-* suporte
 
 Esse domínio é operado por usuários especiais chamados **SystemOperators**.
 
 ---
 
 ## 🧩 Entidades do Sistema
+
+🧑‍💻 **SystemOperator**
+
+Usuários internos responsáveis por administrar a plataforma SaaS.
+
+**Campos principais:**
+
+* id
+* name
+* email
+* password
+* role (SUPER_ADMIN | SUPPORT)
+* is_active
+* created_at
+* updated_at
+
+---
 
 ### 🧾 Plan
 
@@ -79,6 +101,8 @@ Representa os planos comerciais do SaaS.
 * name
 * price
 * is_active
+* max_users
+* max_contacts
 * created_at
 * updated_at
 
@@ -88,7 +112,7 @@ Representa os planos comerciais do SaaS.
 
 Representa uma empresa cliente da plataforma.
 
-Cada organização possui seus próprios dados, usuários e configurações.
+Cada organização possui seus próprios dados e usuários.
 
 **Campos principais:**
 
@@ -98,6 +122,8 @@ Cada organização possui seus próprios dados, usuários e configurações.
 * email
 * is_active
 * email_is_verified
+* plan_started_at
+* plan_expires_at?
 * created_at
 * updated_at
 
@@ -105,7 +131,7 @@ Cada organização possui seus próprios dados, usuários e configurações.
 
 ### 👤 User
 
-Usuário pertencente a uma organização.
+Usuários pertencentes a uma organização.
 
 **Campos principais:**
 
@@ -113,247 +139,187 @@ Usuário pertencente a uma organização.
 * organization_id
 * name
 * email
+* password
+* is_active
 * role (ADMIN | USER)
 * created_at
 * updated_at
 
+**Relacionamentos:**
+
+* permissions: UserPermission[]
+
 ---
 
-### 🏷️ Tag
+### 🔐 Permission
 
-Tags criadas por uma organização para classificar contatos.
+Define ações permitidas em páginas do sistema.
+
+**Campos principais:**
+
+* id
+* page_id
+* action (CREATE | UPDATE | DELETE | VIEW)
+* created_at
+* updated_at
+
+---
+
+### 📄 Page
+
+Representa páginas ou módulos do sistema.
+
+**Campos principais:**
+
+* id
+* name
+* route
+* created_at
+* updated_at
+
+---
+
+### 🔗 UserPermission
+
+Relaciona usuários às permissões.
+
+**Campos principais:**
+
+* id
+* user_id
+* permission_id
+* created_at
+* updated_at
+
+---
+
+### 👥 Client
+
+Representa clientes de uma organização.
 
 **Campos principais:**
 
 * id
 * organization_id
 * name
-* color
+* email?
+* document? (CPF | CNPJ)
 * created_at
 * updated_at
 
 ---
 
-### 🔗 Taggable
+### 💰 Sale
 
-Entidade de ligação entre tags e contatos.
+Representa uma venda realizada para um cliente.
 
 **Campos principais:**
 
 * id
 * organization_id
-* tag_id
-* contact_id
+* client_id
+* value
+* description?
+* created_at
+* updated_at
+
+**Relacionamentos:**
+
+* revenues: Revenue[]
+
+---
+
+### 💵 Revenue
+
+Representa receitas geradas a partir de vendas.
+
+**Campos principais:**
+
+* id
+* organization_id
+* sale_id
+* value
+* is_installment
+* status (OPEN | PAID | OVERDUE)
+* paid_at?
+* billing_date
+* payment_method (CASH | PIX | BOLETO | CREDIT_CARD)
 * created_at
 * updated_at
 
 ---
 
-### 🔄 Pipeline
+### 📉 Expense
 
-Representa um funil de vendas.
-
-Cada organização pode criar múltiplos pipelines, separados por tipo de contato.
+Representa despesas da organização.
 
 **Campos principais:**
 
 * id
 * organization_id
+* recurring_expense_id?
 * name
-* contact_type (LEAD | CLIENT)
-* is_default
-* is_active
-* created_at
-* updated_at
-
----
-
-### 📍 PipelineStage
-
-Estágios de um pipeline.
-
-**Campos principais:**
-
-* id
-* organization_id
-* pipeline_id
-* name
-* position
-* color
-* is_initial
-* is_final
-* is_active
-* created_at
-* updated_at
-
----
-
-### 👥 Contact
-
-Entidade central do sistema.
-
-Leads e clientes são representados por uma única entidade, diferenciados pelo campo `type`.
-
-**Campos principais:**
-
-* id
-* organization_id
-* type (LEAD | CLIENT)
-* contact_status_id
-* pipeline_id?
-* pipeline_stage_id?
-* origin_id?
-* name
-* email
-* phone
-* assigned_to_user_id?
-* created_at
-* updated_at
-
-**Regras de negócio:**
-
-* contatos do tipo LEAD participam de pipelines
-* contatos do tipo CLIENT não participam de pipelines
-* conversão de lead para cliente é feita alterando o campo `type`
-
----
-
-### 🟢 ContactStatus
-
-Status customizáveis definidos por organização.
-
-**Campos principais:**
-
-* id
-* organization_id
-* applies_to (LEAD | CLIENT)
-* name
-* color
-* created_at
-* updated_at
-
----
-
-### 📞 Activity
-
-Representa tarefas e interações relacionadas a um contato.
-
-**Campos principais:**
-
-* id
-* organization_id
-* contact_id
-* activity_type_id
-* activity_status_id
+* description?
+* value
 * due_date
-* completed_at?
-* assigned_to_user_id
+* paid_date?
+* status (OPEN | PAID | OVERDUE)
 * created_at
 * updated_at
 
 ---
 
-### 🧩 ActivityType
+### 🔁 RecurringExpense
 
-Tipos de atividades configuráveis por organização.
+Representa despesas recorrentes.
 
-Exemplos:
-
-* ligação
-* reunião
-* WhatsApp
+Essas despesas geram automaticamente registros em Expense.
 
 **Campos principais:**
 
 * id
 * organization_id
 * name
+* description?
+* value
+* due_date
+* is_active
 * created_at
 * updated_at
 
 ---
 
-### 🚦 ActivityStatus
+### ⚙️ Regras de Negócio Principais
 
-Status possíveis para uma atividade.
-
-Exemplos:
-
-* pending
-* done
-* canceled
-
-**Campos principais:**
-
-* id
-* organization_id
-* name
-* created_at
-* updated_at
+* Cada organização possui seus próprios dados financeiros.
+* Uma venda pode gerar uma ou múltiplas receitas (parcelamento).
+* Despesas podem ser:
+  * pontuais (```Expense```)
+  * recorrentes (```RecurringExpense```)
+* O status financeiro é controlado pelo enum ```FinancialStatus```.
+* O acesso ao sistema é controlado por:
+  * papéis (```UserRole```)
+  * permissões granulares (```Permission```).
 
 ---
 
-### 🕓 PipelineStageHistory
+### 📌 Status do Projeto
 
-Histórico de movimentação dos contatos no pipeline.
+O CONTROL CA$H está em desenvolvimento ativo, começando por um MVP funcional e evoluindo de forma incremental, com foco em:
 
-Permite auditoria e análise de funil.
-
-**Campos principais:**
-
-* id
-* organization_id
-* contact_id
-* contact_type
-* from_stage_id
-* to_stage_id
-* changed_by_user_id
-* changed_at
-* created_at
-* updated_at
+* controle financeiro básico
+* multi-tenancy
+* permissões e papéis
+* estrutura SaaS
 
 ---
 
-## 🛠️ Domínio da Plataforma
+### 🚀 Objetivos do Projeto
 
-### 🧑‍💻 SystemOperator
-
-Usuários internos responsáveis por operar e administrar o SaaS.
-
-**Características:**
-
-* não pertencem a nenhuma organization
-* possuem acesso global
-* operam dashboards administrativos
-
-**Exemplos de responsabilidades:**
-
-* ativar/desativar organizações
-* alterar planos
-* visualizar métricas globais
-* suporte aos clientes
-
----
-
-## 🚀 Objetivos do Projeto
-
-* Servir como **projeto de portfólio avançado**
-* Ser uma base realista para um **produto SaaS vendável**
+* Servir como projeto de portfólio avançado
 * Demonstrar boas práticas de:
-
   * modelagem de domínio
   * multi-tenancy
+  * controle de permissões
+  * organização de regras de negócio
   * escalabilidade
-  * separação de responsabilidades
-
----
-
-## 📌 Status
-
-O projeto está em desenvolvimento ativo e foi planejado para evoluir incrementalmente, começando por um MVP funcional e expandindo conforme validação do produto.
-
----
-
-## 📄 Licença
-
-Projeto de uso educacional e profissional. A licença final poderá ser definida conforme o modelo de distribuição escolhido.
