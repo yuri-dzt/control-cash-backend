@@ -6,3 +6,16 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model SystemOperator {
+  id         String  @id @unique
+  name       String
+  email      String  @unique
+  password   String
+  is_active  Boolean
+  role       String
+  created_at BigInt
+  updated_at BigInt?
+
+  @@map("system_operators")
+}

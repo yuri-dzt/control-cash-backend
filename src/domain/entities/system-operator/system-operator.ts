@@ -1,35 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { SystemOperatorRole } from './enum'
+import { Create, Update } from '../../../shared/utils';
 import { Account, AccountProps } from '../../../shared/account';
 
 export type ISystemOperator = AccountProps & {
   role: SystemOperatorRole
-  is_active: boolean
 };
 
-export type SystemOperatorProps = Omit<ISystemOperator, "id" | 'created_at'> & {
-  id?: string
-  created_at?: number
-}
-
-export type UpdateSystemOperatorProps = Omit<ISystemOperator, "id" | 'name' | 'email' | 'password' | 'is_active' | 'role' | 'created_at' | 'updated_at'> & {
-  name?: string
-  email?: string
-  password?: string
-  is_active?: boolean
-  role?: SystemOperatorRole
-}
+export type SystemOperatorProps = Create<ISystemOperator>
+export type UpdateSystemOperatorProps = Update<ISystemOperator>
 
 export type SystemOperatorsCollection = SystemOperator[]
 
 export class SystemOperator extends Account<ISystemOperator> {
   get role() {
     return this.props.role
-  }
-
-  get is_active() {
-    return this.props.is_active
   }
 
   constructor(props: SystemOperatorProps) {

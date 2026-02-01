@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
 import { JwtService } from "../services/jwt";
-import { PrismaSessionRepository } from "../repositories/prisma/session";
 
 export const verifyTokenMiddleware = async (
 	req: Request,
@@ -34,13 +33,6 @@ export const verifyTokenMiddleware = async (
 	}
 
 	// 🔍 valida sessão no banco
-	const sessionRepo = new PrismaSessionRepository();
-	const session = await sessionRepo.findById(decoded.session_id);
-
-	if (!session || session.expires_at < Date.now()) {
-		return res.status(401).json({ code: "SESSION_EXPIRED" });
-	}
-
 	req.user = {
 		account_id: decoded.account_id,
 		account_type: decoded.account_type,

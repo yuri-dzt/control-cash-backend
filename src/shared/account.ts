@@ -27,6 +27,10 @@ export abstract class Account<T extends AccountProps> {
     return this.props.password;
   }
 
+  get is_active() {
+    return this.props.is_active;
+  }
+
   get created_at() {
     return this.props.created_at;
   }

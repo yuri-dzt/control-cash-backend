@@ -34,7 +34,7 @@ describe("CreateSystemOperatorUseCase", () => {
     })
 
     expect(response).toBeInstanceOf(CreateSystemOperatorUseCaseError);
-    expect((response as CreateSystemOperatorUseCaseError).message).toEqual("Error on create system operator: Email already exists");
+    expect((response as CreateSystemOperatorUseCaseError).message).toEqual("Error on create system operator: Email already used");
   })
 
   it("should create an admin", async () => {
