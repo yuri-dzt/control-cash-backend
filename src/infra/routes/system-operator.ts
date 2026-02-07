@@ -1,7 +1,6 @@
 import { ZodError } from "zod";
 import { type Request, type Response, Router } from "express";
 
-import { verifyTokenMiddleware } from "../middlewares/jwt";
 import { createSystemOperatorSchema } from "../schemas/system-operator/create";
 import { updateSystemOperatorSchema } from "../schemas/system-operator/update";
 import { GetSystemOperatorsControllerFactory } from "../factories/system-operator/get";
@@ -10,6 +9,7 @@ import { CreateSystemOperatorControllerFactory } from "../factories/system-opera
 import { UpdateSystemOperatorControllerFactory } from "../factories/system-operator/update";
 import { DeleteSystemOperatorControllerFactory } from "../factories/system-operator/delete";
 import { GetSystemOperatorsUseCaseInput } from "../../app/use-cases/system-operator/get/input";
+import { authorizeSuperAdminMiddleware, authorizeAdminRolesMiddleware } from "../middlewares/jwt";
 import { CreateSystemOperatorUseCaseInput } from "../../app/use-cases/system-operator/create/input";
 import { UpdateSystemOperatorUseCaseInput } from "../../app/use-cases/system-operator/update/input";
 import { CreateFirstSystemOperatorControllerFactory } from "../factories/system-operator/create-first";
@@ -44,7 +44,7 @@ route.post('/system-operators/first', async (req: Request<any, any, CreateFirstS
   }
 })
 
-route.post('/system-operators', verifyTokenMiddleware, async (req: Request<any, any, CreateSystemOperatorUseCaseInput>, res: Response) => {
+route.post('/system-operators', authorizeSuperAdminMiddleware, async (req: Request<any, any, CreateSystemOperatorUseCaseInput>, res: Response) => {
   try {
     const { name, email, password, role } = createSystemOperatorSchema.parse(req.body)
 
@@ -71,7 +71,7 @@ route.post('/system-operators', verifyTokenMiddleware, async (req: Request<any, 
   }
 })
 
-route.patch('/system-operators/:id', verifyTokenMiddleware, async (req: Request<any, any, UpdateSystemOperatorUseCaseInput>, res: Response) => {
+route.patch('/system-operators/:id', authorizeAdminRolesMiddleware, async (req: Request<any, any, UpdateSystemOperatorUseCaseInput>, res: Response) => {
   try {
     const { id } = req.params
     const { name, email, password, role, is_active } = updateSystemOperatorSchema.parse(req.body)
@@ -101,7 +101,7 @@ route.patch('/system-operators/:id', verifyTokenMiddleware, async (req: Request<
   }
 })
 
-route.delete('/system-operators/:id', verifyTokenMiddleware, async (req: Request<any, any, UpdateSystemOperatorUseCaseInput>, res: Response) => {
+route.delete('/system-operators/:id', authorizeSuperAdminMiddleware, async (req: Request<any, any, UpdateSystemOperatorUseCaseInput>, res: Response) => {
   try {
     const { id } = req.params
     const admin_id = req.user
@@ -118,7 +118,7 @@ route.delete('/system-operators/:id', verifyTokenMiddleware, async (req: Request
   }
 })
 
-route.get('/system-operators', verifyTokenMiddleware, async (req: Request<any, any, GetSystemOperatorsUseCaseInput>, res: Response) => {
+route.get('/system-operators', authorizeAdminRolesMiddleware, async (req: Request<any, any, GetSystemOperatorsUseCaseInput>, res: Response) => {
   try {
     const { id, name, email, role, is_active, created_at } = req.params
 

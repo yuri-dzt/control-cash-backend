@@ -1,43 +1,106 @@
+// import type { NextFunction, Request, Response } from "express";
+
+// import { JwtService } from "../services/jwt";
+
+// export const authorizeSuperAdminMiddleware = async (
+// 	req: Request,
+// 	res: Response,
+// 	next: NextFunction,
+// ) => {
+// 	const { authorization } = req.headers;
+
+// 	if (!authorization) {
+// 		return res.status(401).json({ code: "UNAUTHORIZED" });
+// 	}
+
+// 	const [, token] = authorization.split(" ");
+
+// 	const jwtService = new JwtService();
+// 	const decoded = jwtService.verify(token);
+
+// 	if (decoded instanceof Error) {
+// 		return res.status(401).json({ code: "TOKEN_INVALID" });
+// 	}
+
+// 	if (decoded.account_type !== "SUPER_ADMIN") {
+// 		return res.status(401).json({ code: "UNAUTHORIZED" });
+// 	}
+
+// 	req.user = {
+// 		account_id: decoded.account_id,
+// 		account_type: decoded.account_type,
+// 	};
+
+// 	next();
+// };
+
+// export const authorizeAdminRolesMiddleware = async (
+// 	req: Request,
+// 	res: Response,
+// 	next: NextFunction,
+// ) => {
+// 	const { authorization } = req.headers;
+
+// 	if (!authorization) {
+// 		return res.status(401).json({ code: "UNAUTHORIZED" });
+// 	}
+
+// 	const [, token] = authorization.split(" ");
+
+// 	const jwtService = new JwtService();
+// 	const decoded = jwtService.verify(token);
+
+// 	if (decoded instanceof Error) {
+// 		return res.status(401).json({ code: "TOKEN_INVALID" });
+// 	}
+
+// 	if (decoded.account_type !== "SUPER_ADMIN" && decoded.account_type !== "SUPPORT") {
+// 		return res.status(401).json({ code: "UNAUTHORIZED" });
+// 	}
+
+// 	req.user = {
+// 		account_id: decoded.account_id,
+// 		account_type: decoded.account_type,
+// 	};
+
+// 	next();
+// };
+
 import type { NextFunction, Request, Response } from "express";
 
 import { JwtService } from "../services/jwt";
+import { SystemOperatorRole } from "../../domain/entities/system-operator/enum";
 
-export const verifyTokenMiddleware = async (
-	req: Request,
-	res: Response,
-	next: NextFunction,
-) => {
-	const { authorization } = req.headers;
 
-	if (!authorization) {
-		return res.status(401).json({ code: "UNAUTHORIZED" });
-	}
+const authorizeRoles = (allowedRoles: SystemOperatorRole[]) => {
+	return async (req: Request, res: Response, next: NextFunction) => {
+		const { authorization } = req.headers;
 
-	const [, token] = authorization.split(" ");
+		if (!authorization) {
+			return res.status(401).json({ code: "UNAUTHORIZED" });
+		}
 
-	const jwtService = new JwtService();
-	const decoded = await jwtService.verify(token);
+		const [, token] = authorization.split(" ");
 
-	if (decoded instanceof Error) {
-		return res.status(401).json({ code: "TOKEN_INVALID" });
-	}
+		const jwtService = new JwtService();
+		const decoded = jwtService.verify(token);
 
-	// 🚨 garante que é ACCESS token
-	if (decoded.type !== "access") {
-		return res.status(401).json({ code: "INVALID_TOKEN_TYPE" });
-	}
+		if (decoded instanceof Error) {
+			return res.status(401).json({ code: "TOKEN_INVALID" });
+		}
 
-	// 🚨 garante que existe sessão
-	if (!decoded.session_id) {
-		return res.status(401).json({ code: "SESSION_ID_MISSING" });
-	}
+		if (!allowedRoles.includes(decoded.account_type as SystemOperatorRole)) {
+			return res.status(401).json({ code: "UNAUTHORIZED" });
+		}
 
-	// 🔍 valida sessão no banco
-	req.user = {
-		account_id: decoded.account_id,
-		account_type: decoded.account_type,
-		session_id: decoded.session_id,
+		req.user = {
+			account_id: decoded.account_id,
+			account_type: decoded.account_type,
+		};
+
+		next();
 	};
-
-	next();
 };
+
+export const authorizeSuperAdminMiddleware = authorizeRoles([SystemOperatorRole.SUPER_ADMIN]);
+export const authorizeAdminRolesMiddleware = authorizeRoles([SystemOperatorRole.SUPER_ADMIN, SystemOperatorRole.SUPPORT]);
